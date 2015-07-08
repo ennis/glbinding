@@ -1,1 +1,1 @@
-python scripts/generate.py -s gl.xml -d ../source/glbinding -r gl.revision -p patch.xml
+python scripts/generate.py -a gl -p gl -l gl -s gl.xml -r gl.revision -x glpatch.xml

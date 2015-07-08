@@ -1,14 +1,6 @@
 #pragma once
 
-#include <%abinding/%abinding_api.h>
-
 #include <%abinding/no%a.h>
 #include <%abinding/%a/types.h>
 
-
-namespace %a
-{
-
 %s
-
-} // namespace %a
