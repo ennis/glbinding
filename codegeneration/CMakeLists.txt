@@ -1,36 +1,52 @@
 
-find_program(PYTHON "python")
+function(add_xml_update api)
 
-set(update_target update)
-set(generate_target generate)
+    add_custom_target(update-${api})
+    add_custom_command(
+        TARGET            update-${api}
+        PRE_BUILD
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMAND           ${PYTHON} scripts/update.py -f ${api}.xml -r ${api}.revision
+        COMMENT           "Updating ${api}.xml from public SVN."
+    )
+    set_target_properties(update-${api} PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD 1)
+    add_dependencies(update update-${api})
+
+endfunction()
+
+function(add_library_generation_ext api prefix library xml)
+    
+    add_custom_target(generate-${library})
+    add_custom_command(
+        TARGET            generate-${library}
+        PRE_BUILD
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMAND           ${PYTHON} scripts/generate.py -a ${api} -p ${prefix} -l ${library} -s ${xml}.xml -r ${xml}.revision -x ${xml}patch.xml
+        COMMENT           "Generating ${library}binding code."
+    )
+    set_target_properties(generate-${library} PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD 1)
+    add_dependencies(generate generate-${library})
+    
+endfunction()
+
+function(add_library_generation api)
+    
+    add_library_generation_ext(${api} ${api} ${api} ${api})
+
+endfunction()
+
+
+find_program(PYTHON "python")
 
 if (PYTHON)
 
-    add_custom_target(${update_target})
-    add_custom_target(${generate_target})
+    add_custom_target(update)
+    add_custom_target(generate)
 
-    add_custom_command (
-        TARGET              ${update_target}
-        PRE_BUILD
-        WORKING_DIRECTORY   ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMAND             ${PYTHON} scripts/update.py -f gl.xml -r gl.revision
-        COMMENT             "Updating gl.xml from public SVN."
-    )
-    
-    add_custom_command (
-        TARGET              ${generate_target}
-        PRE_BUILD
-        WORKING_DIRECTORY   ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMAND             ${PYTHON} scripts/generate.py -s gl.xml -p patch.xml -d ../source/glbinding -r gl.revision
-        COMMENT             "Generating OpenGL binding code."
-    )
-
-    # Declare target
-    
-    set_target_properties(${update_target} PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD 1)
-    set_target_properties(${generate_target} PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD 1)
+    add_xml_update("gl")
+    add_library_generation("gl")
 
 else()
-    message("update target code skipped: python not found")
-    message("generate target code skipped: python not found")
+    message("update target skipped: python not found")
+    message("generate target skipped: python not found")
 endif()
