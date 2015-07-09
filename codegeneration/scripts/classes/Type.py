@@ -4,40 +4,36 @@ def inner(xml):
 
 class Type:
 
-    def __init__(self, xml):
+    def __init__(self, xml, api):
 
         self.isGroup = "name" in xml.attrib and sum(1 for l in inner(xml).splitlines()) > 1
-        
+
+        self.name = ""
+        self.value = ""
+        self.ignoreName = False
+        self.isInclude = False
+
         if self.isGroup: # groups
             self.name = xml.attrib["name"]
             self.value = inner(xml)
-            self.ignoreName = False
-            self.isInclude = False
-        elif "name" in xml.attrib and not inner(xml): # foreign declarations; ignore
-            self.name = ""
-            self.value = ""
-            self.ignoreName = False
-            self.isInclude = False
+
+#        elif "name" in xml.attrib and not inner(xml): # foreign declarations; ignore
+
         elif "name" in xml.attrib and inner(xml): # includes; ignore all except khr includes
-            if inner(xml).startswith("#include <KHR/"):
-                self.name = ""
+            if not api == "gl" and inner(xml).startswith("#include <KHR/"):
                 self.value = inner(xml)
                 self.ignoreName = True
                 self.isInclude = True
-            else:
-                self.name = ""
-                self.value = ""
-                self.ignoreName = False
-                self.isInclude = False
+#            else:
+
         else: # normal declarations
             self.name = xml.find("name").text
-            self.isInclude = False
+
             if inner(xml).startswith("struct") and not self.name.startswith("struct"):
                 self.value = "".join([ t for t in xml.itertext() ])
                 self.ignoreName = True
             else:
                 self.value = "".join([ t for t in xml.itertext() if t != self.name ])
-                self.ignoreName = False
             
             if self.name.startswith("struct "):
                 self.name = self.name[7:]
@@ -77,7 +73,7 @@ def parseTypes(xml, api, prefix):
                and ("name" not in type.attrib):
                 continue
 
-            types.append(Type(type))
+            types.append(Type(type, api))
 
     return types
 
@@ -87,7 +83,7 @@ def patchTypes(types, patches):
     # currently only adding types is supported
 
     for patch in patches:
-        if (patch.name.endswith("int")): #TODO: seems like a hack, needed for EGL
+        if (patch.name.endswith("int")): #ToDo: seems like a hack, needed for EGL
             types.insert(0, patch)
         else:
             types.append(patch)

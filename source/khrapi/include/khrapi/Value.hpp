@@ -1,8 +1,10 @@
 #pragma once
 
-#include <glbinding/Value.h>
+#include <khrapi/Value.h>
 
-namespace glbinding 
+#include <iostream>
+
+namespace khrapi 
 {
 
 template <typename... Arguments>
@@ -11,7 +13,7 @@ struct ValueAdder;
 template <>
 struct ValueAdder<>
 {
-    static void add(std::vector<glbinding::AbstractValue*> &)
+    static void add(std::vector<AbstractValue*> &)
     {
     }
 };
@@ -19,15 +21,15 @@ struct ValueAdder<>
 template <typename Argument, typename... Arguments>
 struct ValueAdder<Argument, Arguments...>
 {
-    static void add(std::vector<glbinding::AbstractValue*> & values, Argument value, Arguments&&... rest)
+    static void add(std::vector<AbstractValue*> & values, Argument value, Arguments&&... rest)
     {
-        values.push_back(glbinding::createValue<Argument>(value));
+        values.push_back(createValue<Argument>(value));
         ValueAdder<Arguments...>::add(values, std::forward<Arguments>(rest)...);
     }
 };
 
 template <typename... Arguments>
-void addValuesTo(std::vector<glbinding::AbstractValue*> & values, Arguments&&... arguments)
+void addValuesTo(std::vector<AbstractValue*> & values, Arguments&&... arguments)
 {
     ValueAdder<Arguments...>::add(values, std::forward<Arguments>(arguments)...);
 }
@@ -59,4 +61,4 @@ std::vector<AbstractValue*> createValues(Arguments&&... arguments)
     return values;
 }
 
-} // namespace glbinding
+} // namespace khrapi

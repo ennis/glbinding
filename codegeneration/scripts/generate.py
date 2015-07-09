@@ -29,9 +29,9 @@ from gen_versions import *
 from gen_meta import *
 from gen_test import *
 
-def generate(api, prefix, libraryNamespace, inputfile, revisionfile, patchfile):
+def generate(api, prefix, namespace, inputfile, revisionfile, patchfile):
 
-    library = libraryNamespace + "binding"
+    library = namespace + "binding"
     
     # preparing
 
@@ -151,62 +151,62 @@ def generate(api, prefix, libraryNamespace, inputfile, revisionfile, patchfile):
     sourcedir  = "../source/"+library+"/source/"
     testdir    = "../source/tests/"+library+"-test/"
 
-    includedir_api = includedir + libraryNamespace + "?/"
+    includedir_api = includedir + namespace + "?/"
 
-    genRevision                   (api, prefix, libraryNamespace, revision,           sourcedir,      "revision.h")
+    genRevision                   (api, prefix, namespace, revision,           sourcedir,      "revision.h")
 
-    genExtensions                 (api, prefix, libraryNamespace, extensions,         includedir_api, "extension.h")
+    genExtensions                 (api, prefix, namespace, extensions,         includedir_api, "extension.h")
 
-    genBooleans                   (api, prefix, libraryNamespace, enums,              includedir_api, "boolean.h")
-    genBooleansFeatureGrouped     (api, prefix, libraryNamespace, enums, features,    includedir_api, "boolean?.h")
+    genBooleans                   (api, prefix, namespace, enums,              includedir_api, "boolean.h")
+    genBooleansFeatureGrouped     (api, prefix, namespace, enums, features,    includedir_api, "boolean?.h")
 
-    genValues                     (api, prefix, libraryNamespace, enums,              includedir_api, "values.h")
-    genValuesFeatureGrouped       (api, prefix, libraryNamespace, enums, features,    includedir_api, "values?.h")
+    genValues                     (api, prefix, namespace, enums,              includedir_api, "values.h")
+    genValuesFeatureGrouped       (api, prefix, namespace, enums, features,    includedir_api, "values?.h")
 
-    genTypes_h                    (api, prefix, libraryNamespace, types, bitfGroups,  includedir_api, "types.h")
-    genTypeIntegrations_h         (api, prefix, libraryNamespace, types, bitfGroups,  includedir_api, "typeintegrations.h")
-    genTypesFeatureGrouped        (api, prefix, libraryNamespace, types, bitfGroups,  features,  includedir_api, "types?.h")
+    genTypes_h                    (api, prefix, namespace, types, bitfGroups,  includedir_api, "types.h")
+    genTypeIntegrations_h         (api, prefix, namespace, types, bitfGroups,  includedir_api, "typeintegrations.h")
+    genTypesFeatureGrouped        (api, prefix, namespace, types, bitfGroups,  features,  includedir_api, "types?.h")
 
-    genBitfieldsAll               (api, prefix, libraryNamespace, enums,              includedir_api, "bitfield.h")
-    genBitfieldsFeatureGrouped    (api, prefix, libraryNamespace, enums, features,    includedir_api, "bitfield?.h")
+    genBitfieldsAll               (api, prefix, namespace, enums,              includedir_api, "bitfield.h")
+    genBitfieldsFeatureGrouped    (api, prefix, namespace, enums, features,    includedir_api, "bitfield?.h")
 
-    genEnumsAll                   (api, prefix, libraryNamespace, enums,              includedir_api, "enum.h")
-    genEnumsFeatureGrouped        (api, prefix, libraryNamespace, enums, features,    includedir_api, "enum?.h")
+    genEnumsAll                   (api, prefix, namespace, enums,              includedir_api, "enum.h")
+    genEnumsFeatureGrouped        (api, prefix, namespace, enums, features,    includedir_api, "enum?.h")
 
-    genFunctionsAll               (api, prefix, libraryNamespace, commands,           includedir_api, "functions.h")
-    genFunctionsFeatureGrouped    (api, prefix, libraryNamespace, commands, features, includedir_api, "functions?.h")
+    genFunctionsAll               (api, prefix, namespace, commands,           includedir_api, "functions.h")
+    genFunctionsFeatureGrouped    (api, prefix, namespace, commands, features, includedir_api, "functions?.h")
     
-    genFeatures                   (api, prefix, libraryNamespace, features,           includedir_api, "?.h")
+    genFeatures                   (api, prefix, namespace, features,           includedir_api, "?.h")
 
-    genTypeIntegrations_cpp       (api, prefix, libraryNamespace, types, bitfGroups,  sourcedir,  "typeintegrations.cpp")
+    genTypeIntegrations_cpp       (api, prefix, namespace, types, bitfGroups,  sourcedir,  "typeintegrations.cpp")
     
-    genFunctionImplementationsAll (api, prefix, libraryNamespace, commands,           sourcedir,  "functions.cpp")
+    genFunctionImplementationsAll (api, prefix, namespace, commands,           sourcedir,  "functions.cpp")
     
-    genTest                       (api, prefix, libraryNamespace, features,           testdir,        "AllVersions_test.cpp")
+    genTest                       (api, prefix, namespace, features,           testdir,        "AllVersions_test.cpp")
 
     # Generate binding classes
 
-    genFunctionObjects_h          (api, prefix, libraryNamespace, commands,           includedir,     "Binding.h")
-    genFunctionObjects_cpp        (api, prefix, libraryNamespace, commands,           sourcedir,      "Binding_objects.cpp")
+    genFunctionObjects_h          (api, prefix, namespace, commands,           includedir,     "Binding.h")
+    genFunctionObjects_cpp        (api, prefix, namespace, commands,           sourcedir,      "Binding_objects.cpp")
 
-    genVersions                   (api, prefix, libraryNamespace, features,           sourcedir,      "Version_ValidVersions.cpp")
+    genVersions                   (api, prefix, namespace, features,           sourcedir,      "Version_ValidVersions.cpp")
 
     # ToDo: the generation of enum to/from string will probably be unified...
-    genMetaMaps		          (api, prefix, libraryNamespace, enums,              sourcedir,      "Meta_Maps.h",               bitfGroups)
-    genMetaStringsByBitfield      (api, prefix, libraryNamespace, bitfGroups,         sourcedir,      "Meta_StringsByBitfield.cpp")
-    genMetaBitfieldByString       (api, prefix, libraryNamespace, bitfGroups,         sourcedir,      "Meta_BitfieldsByString.cpp")
-    genMetaStringsByEnum          (api, prefix, libraryNamespace, enums,              sourcedir,      "Meta_StringsByBoolean.cpp", prefix.upper() + "boolean")
-    genMetaEnumsByString          (api, prefix, libraryNamespace, enums,              sourcedir,      "Meta_BooleansByString.cpp", prefix.upper() + "boolean")
-    genMetaStringsByEnum          (api, prefix, libraryNamespace, enums,              sourcedir,      "Meta_StringsByEnum.cpp",    prefix.upper() + "enum")
-    genMetaEnumsByString          (api, prefix, libraryNamespace, enums,              sourcedir,      "Meta_EnumsByString.cpp",    prefix.upper() + "enum")
+    genMetaMaps		          (api, prefix, namespace, enums,              sourcedir,      "Meta_Maps.h",               bitfGroups)
+    genMetaStringsByBitfield      (api, prefix, namespace, bitfGroups,         sourcedir,      "Meta_StringsByBitfield.cpp")
+    genMetaBitfieldByString       (api, prefix, namespace, bitfGroups,         sourcedir,      "Meta_BitfieldsByString.cpp")
+    genMetaStringsByEnum          (api, prefix, namespace, enums,              sourcedir,      "Meta_StringsByBoolean.cpp", prefix.upper() + "boolean")
+    genMetaEnumsByString          (api, prefix, namespace, enums,              sourcedir,      "Meta_BooleansByString.cpp", prefix.upper() + "boolean")
+    genMetaStringsByEnum          (api, prefix, namespace, enums,              sourcedir,      "Meta_StringsByEnum.cpp",    prefix.upper() + "enum")
+    genMetaEnumsByString          (api, prefix, namespace, enums,              sourcedir,      "Meta_EnumsByString.cpp",    prefix.upper() + "enum")
 
-    genMetaStringsByExtension     (api, prefix, libraryNamespace, extensions,         sourcedir,      "Meta_StringsByExtension.cpp")
-    genMetaExtensionsByString     (api, prefix, libraryNamespace, extensions,         sourcedir,      "Meta_ExtensionsByString.cpp")
+    genMetaStringsByExtension     (api, prefix, namespace, extensions,         sourcedir,      "Meta_StringsByExtension.cpp")
+    genMetaExtensionsByString     (api, prefix, namespace, extensions,         sourcedir,      "Meta_ExtensionsByString.cpp")
 
-    genReqVersionsByExtension     (api, prefix, libraryNamespace, extensions,         sourcedir,      "Meta_ReqVersionsByExtension.cpp")
+    genReqVersionsByExtension     (api, prefix, namespace, extensions,         sourcedir,      "Meta_ReqVersionsByExtension.cpp")
 
-    genFunctionStringsByExtension (api, prefix, libraryNamespace, extensions,         sourcedir,      "Meta_FunctionStringsByExtension.cpp")
-    genExtensionsByFunctionString (api, prefix, libraryNamespace, extensions,         sourcedir,      "Meta_ExtensionsByFunctionString.cpp")
+    genFunctionStringsByExtension (api, prefix, namespace, extensions,         sourcedir,      "Meta_FunctionStringsByExtension.cpp")
+    genExtensionsByFunctionString (api, prefix, namespace, extensions,         sourcedir,      "Meta_ExtensionsByFunctionString.cpp")
 
 
     print("")
@@ -216,7 +216,7 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv[1:], "a:p:l:s:r:x:", ["api=", "prefix=", "library=", "spec=", "revision=", "patch="])
     except getopt.GetoptError:
-        print("usage: %s -a <api> -p <symbol prefix> -l <library namespace> -s <spec file> [-x <patch spec file>] [-r <revision file>]" % argv[0])
+        print("usage: %s -a <api> -p <symbol prefix> -l <namespace> -s <spec file> [-x <patch spec file>] [-r <revision file>]" % argv[0])
         sys.exit(1)
         
     api = None
