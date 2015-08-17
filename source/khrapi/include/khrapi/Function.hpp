@@ -1,14 +1,15 @@
 #pragma once
 
 #include <khrapi/Function.h>
-#include <khrapi/logging.h>
-#include <khrapi/Value.h>
-#include <khrapi/callbacks.h>
 
 #include <cassert>
 #include <utility>
 #include <functional>
 #include <memory>
+
+#include <khrapi/logging.h>
+#include <khrapi/Value.h>
+#include <khrapi/callbacks.h>
 
 namespace khrapi
 {
