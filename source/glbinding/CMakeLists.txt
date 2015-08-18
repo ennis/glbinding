@@ -108,6 +108,11 @@ add_library(${target} ${api_includes} ${sources})
 
 target_link_libraries(${target} ${libs} ${EXTRA_LIBS})
 
+if(MSVC)
+    # allow unreferenced local functions
+    set(DEFAULT_COMPILE_FLAGS ${DEFAULT_COMPILE_FLAGS} /wd4505)
+endif()
+
 target_compile_options(${target} PRIVATE ${DEFAULT_COMPILE_FLAGS})
 
 set_target_properties(${target}
