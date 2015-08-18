@@ -8,7 +8,67 @@ namespace std
 {
 
 template<>
-struct hash<gl::GLenum>
+struct enable_if<!is_class<hash<gl::GLboolean>>::value, hash<gl::GLboolean>>
+{
+    using type = gl::GLboolean;
+    using underlying_type = std::underlying_type<type>::type;
+    
+    hash<underlying_type>::result_type operator()(const type & t) const
+    {
+        return hash<underlying_type>()(static_cast<underlying_type>(t));
+    }
+};
+
+} // namespace std
+
+
+namespace gl
+{
+
+GLBINDING_API std::ostream & operator<<(std::ostream & stream, const GLboolean & value);
+
+} // namespace gl
+
+
+namespace gl
+{
+
+GLBINDING_API bool operator!(const GLboolean & a);
+
+} // namespace gl
+
+
+namespace std
+{
+
+template<>
+struct enable_if<!is_class<hash<gl::GLextension>>::value, hash<gl::GLextension>>
+{
+    using type = gl::GLextension;
+    using underlying_type = std::underlying_type<type>::type;
+    
+    hash<underlying_type>::result_type operator()(const type & t) const
+    {
+        return hash<underlying_type>()(static_cast<underlying_type>(t));
+    }
+};
+
+} // namespace std
+
+
+namespace gl
+{
+
+GLBINDING_API std::ostream & operator<<(std::ostream & stream, const GLextension & value);
+
+} // namespace gl
+
+
+namespace std
+{
+
+template<>
+struct enable_if<!is_class<hash<gl::GLenum>>::value, hash<gl::GLenum>>
 {
     using type = gl::GLenum;
     using underlying_type = std::underlying_type<type>::type;
@@ -63,67 +123,7 @@ namespace std
 {
 
 template<>
-struct hash<gl::GLboolean>
-{
-    using type = gl::GLboolean;
-    using underlying_type = std::underlying_type<type>::type;
-    
-    hash<underlying_type>::result_type operator()(const type & t) const
-    {
-        return hash<underlying_type>()(static_cast<underlying_type>(t));
-    }
-};
-
-} // namespace std
-
-
-namespace gl
-{
-
-GLBINDING_API std::ostream & operator<<(std::ostream & stream, const GLboolean & value);
-
-} // namespace gl
-
-
-namespace gl
-{
-
-GLBINDING_API bool operator!(const GLboolean & a);
-
-} // namespace gl
-
-
-namespace std
-{
-
-template<>
-struct hash<gl::GLextension>
-{
-    using type = gl::GLextension;
-    using underlying_type = std::underlying_type<type>::type;
-    
-    hash<underlying_type>::result_type operator()(const type & t) const
-    {
-        return hash<underlying_type>()(static_cast<underlying_type>(t));
-    }
-};
-
-} // namespace std
-
-
-namespace gl
-{
-
-GLBINDING_API std::ostream & operator<<(std::ostream & stream, const GLextension & value);
-
-} // namespace gl
-
-
-namespace std
-{
-
-template<>
-struct hash<gl::AttribMask>
+struct enable_if<!is_class<hash<gl::AttribMask>>::value, hash<gl::AttribMask>>
 {
     using type = gl::AttribMask;
     using underlying_type = std::underlying_type<type>::type;
@@ -160,7 +160,7 @@ namespace std
 {
 
 template<>
-struct hash<gl::ClearBufferMask>
+struct enable_if<!is_class<hash<gl::ClearBufferMask>>::value, hash<gl::ClearBufferMask>>
 {
     using type = gl::ClearBufferMask;
     using underlying_type = std::underlying_type<type>::type;
@@ -197,7 +197,7 @@ namespace std
 {
 
 template<>
-struct hash<gl::ClientAttribMask>
+struct enable_if<!is_class<hash<gl::ClientAttribMask>>::value, hash<gl::ClientAttribMask>>
 {
     using type = gl::ClientAttribMask;
     using underlying_type = std::underlying_type<type>::type;
@@ -234,7 +234,7 @@ namespace std
 {
 
 template<>
-struct hash<gl::ContextFlagMask>
+struct enable_if<!is_class<hash<gl::ContextFlagMask>>::value, hash<gl::ContextFlagMask>>
 {
     using type = gl::ContextFlagMask;
     using underlying_type = std::underlying_type<type>::type;
@@ -271,7 +271,7 @@ namespace std
 {
 
 template<>
-struct hash<gl::ContextProfileMask>
+struct enable_if<!is_class<hash<gl::ContextProfileMask>>::value, hash<gl::ContextProfileMask>>
 {
     using type = gl::ContextProfileMask;
     using underlying_type = std::underlying_type<type>::type;
@@ -308,7 +308,7 @@ namespace std
 {
 
 template<>
-struct hash<gl::FfdMaskSGIX>
+struct enable_if<!is_class<hash<gl::FfdMaskSGIX>>::value, hash<gl::FfdMaskSGIX>>
 {
     using type = gl::FfdMaskSGIX;
     using underlying_type = std::underlying_type<type>::type;
@@ -345,7 +345,7 @@ namespace std
 {
 
 template<>
-struct hash<gl::FragmentShaderColorModMaskATI>
+struct enable_if<!is_class<hash<gl::FragmentShaderColorModMaskATI>>::value, hash<gl::FragmentShaderColorModMaskATI>>
 {
     using type = gl::FragmentShaderColorModMaskATI;
     using underlying_type = std::underlying_type<type>::type;
@@ -382,7 +382,7 @@ namespace std
 {
 
 template<>
-struct hash<gl::FragmentShaderDestMaskATI>
+struct enable_if<!is_class<hash<gl::FragmentShaderDestMaskATI>>::value, hash<gl::FragmentShaderDestMaskATI>>
 {
     using type = gl::FragmentShaderDestMaskATI;
     using underlying_type = std::underlying_type<type>::type;
@@ -419,7 +419,7 @@ namespace std
 {
 
 template<>
-struct hash<gl::FragmentShaderDestModMaskATI>
+struct enable_if<!is_class<hash<gl::FragmentShaderDestModMaskATI>>::value, hash<gl::FragmentShaderDestModMaskATI>>
 {
     using type = gl::FragmentShaderDestModMaskATI;
     using underlying_type = std::underlying_type<type>::type;
@@ -456,7 +456,7 @@ namespace std
 {
 
 template<>
-struct hash<gl::MapBufferUsageMask>
+struct enable_if<!is_class<hash<gl::MapBufferUsageMask>>::value, hash<gl::MapBufferUsageMask>>
 {
     using type = gl::MapBufferUsageMask;
     using underlying_type = std::underlying_type<type>::type;
@@ -493,7 +493,7 @@ namespace std
 {
 
 template<>
-struct hash<gl::MemoryBarrierMask>
+struct enable_if<!is_class<hash<gl::MemoryBarrierMask>>::value, hash<gl::MemoryBarrierMask>>
 {
     using type = gl::MemoryBarrierMask;
     using underlying_type = std::underlying_type<type>::type;
@@ -530,7 +530,7 @@ namespace std
 {
 
 template<>
-struct hash<gl::PathRenderingMaskNV>
+struct enable_if<!is_class<hash<gl::PathRenderingMaskNV>>::value, hash<gl::PathRenderingMaskNV>>
 {
     using type = gl::PathRenderingMaskNV;
     using underlying_type = std::underlying_type<type>::type;
@@ -567,7 +567,7 @@ namespace std
 {
 
 template<>
-struct hash<gl::PerformanceQueryCapsMaskINTEL>
+struct enable_if<!is_class<hash<gl::PerformanceQueryCapsMaskINTEL>>::value, hash<gl::PerformanceQueryCapsMaskINTEL>>
 {
     using type = gl::PerformanceQueryCapsMaskINTEL;
     using underlying_type = std::underlying_type<type>::type;
@@ -604,7 +604,7 @@ namespace std
 {
 
 template<>
-struct hash<gl::SyncObjectMask>
+struct enable_if<!is_class<hash<gl::SyncObjectMask>>::value, hash<gl::SyncObjectMask>>
 {
     using type = gl::SyncObjectMask;
     using underlying_type = std::underlying_type<type>::type;
@@ -641,7 +641,7 @@ namespace std
 {
 
 template<>
-struct hash<gl::TextureStorageMaskAMD>
+struct enable_if<!is_class<hash<gl::TextureStorageMaskAMD>>::value, hash<gl::TextureStorageMaskAMD>>
 {
     using type = gl::TextureStorageMaskAMD;
     using underlying_type = std::underlying_type<type>::type;
@@ -678,7 +678,7 @@ namespace std
 {
 
 template<>
-struct hash<gl::UseProgramStageMask>
+struct enable_if<!is_class<hash<gl::UseProgramStageMask>>::value, hash<gl::UseProgramStageMask>>
 {
     using type = gl::UseProgramStageMask;
     using underlying_type = std::underlying_type<type>::type;
@@ -715,7 +715,7 @@ namespace std
 {
 
 template<>
-struct hash<gl::VertexHintsMaskPGI>
+struct enable_if<!is_class<hash<gl::VertexHintsMaskPGI>>::value, hash<gl::VertexHintsMaskPGI>>
 {
     using type = gl::VertexHintsMaskPGI;
     using underlying_type = std::underlying_type<type>::type;
@@ -752,7 +752,7 @@ namespace std
 {
 
 template<>
-struct hash<gl::UnusedMask>
+struct enable_if<!is_class<hash<gl::UnusedMask>>::value, hash<gl::UnusedMask>>
 {
     using type = gl::UnusedMask;
     using underlying_type = std::underlying_type<type>::type;
@@ -789,7 +789,7 @@ namespace std
 {
 
 template<>
-struct hash<gl::BufferAccessMask>
+struct enable_if<!is_class<hash<gl::BufferAccessMask>>::value, hash<gl::BufferAccessMask>>
 {
     using type = gl::BufferAccessMask;
     using underlying_type = std::underlying_type<type>::type;
@@ -826,7 +826,7 @@ namespace std
 {
 
 template<>
-struct hash<gl::BufferStorageMask>
+struct enable_if<!is_class<hash<gl::BufferStorageMask>>::value, hash<gl::BufferStorageMask>>
 {
     using type = gl::BufferStorageMask;
     using underlying_type = std::underlying_type<type>::type;
@@ -863,7 +863,7 @@ namespace std
 {
 
 template<>
-struct hash<gl::PathFontStyle>
+struct enable_if<!is_class<hash<gl::PathFontStyle>>::value, hash<gl::PathFontStyle>>
 {
     using type = gl::PathFontStyle;
     using underlying_type = std::underlying_type<type>::type;
