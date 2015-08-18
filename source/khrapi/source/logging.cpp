@@ -10,6 +10,7 @@
 #include "logging_private.h"
 #include "RingBuffer.h"
 
+
 namespace
 {
     const unsigned int LOG_BUFFER_SIZE = 5000;

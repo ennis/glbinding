@@ -2,6 +2,7 @@
 
 #include <khrapi/SharedBitfield.h>
 
+
 namespace khrapi 
 {
 

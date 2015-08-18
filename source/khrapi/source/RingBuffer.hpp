@@ -8,6 +8,7 @@
 
 #include "RingBuffer.h"
 
+
 namespace khrapi
 {
 

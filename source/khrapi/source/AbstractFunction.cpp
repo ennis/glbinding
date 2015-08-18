@@ -8,6 +8,7 @@
 
 #include "callbacks_private.h"
 
+
 namespace khrapi
 {
 

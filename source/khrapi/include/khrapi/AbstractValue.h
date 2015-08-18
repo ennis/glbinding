@@ -1,9 +1,10 @@
 #pragma once
 
-#include <khrapi/khrapi_api.h>
-
 #include <string>
 #include <iosfwd>
+
+#include <khrapi/khrapi_api.h>
+
 
 namespace khrapi 
 {

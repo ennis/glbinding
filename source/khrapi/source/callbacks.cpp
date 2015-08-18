@@ -8,6 +8,7 @@
 #include <khrapi/AbstractValue.h>
 #include <khrapi/AbstractFunction.h>
 
+
 namespace
 {
     khrapi::SimpleFunctionCallback g_unresolvedCallback;
