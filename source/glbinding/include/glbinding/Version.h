@@ -13,7 +13,12 @@ class Binding;
 class GLBINDING_API Version : public khrapi::Version<Binding>
 {
 public:
-    using khrapi::Version<Binding>::Version;
+    Version();
+    Version(int majorVersion, int minorVersion);
+
+    Version(const Version & version);
+    Version(Version && version);
+
 
     bool isValid() const;
 

@@ -5,6 +5,26 @@
 namespace glbinding
 {
 
+Version::Version()
+: khrapi::Version<Binding>()
+{
+}
+
+Version::Version(int majorVersion, int minorVersion)
+: khrapi::Version<Binding>(majorVersion, minorVersion)
+{
+}
+
+Version::Version(const Version & version)
+: khrapi::Version<Binding>(version)
+{
+}
+
+Version::Version(Version && version)
+: khrapi::Version<Binding>(version)
+{
+}
+
 bool Version::isValid() const
 {
     return s_validVersions.find(*this) != s_validVersions.end();
