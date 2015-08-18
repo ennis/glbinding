@@ -3,7 +3,7 @@ namespace std
 {
 
 template<>
-struct hash<%a::%t>
+struct enable_if<!is_class<hash<%a::%t>>::value, hash<%a::%t>>
 {
     using type = %a::%t;
     using underlying_type = std::underlying_type<type>::type;
