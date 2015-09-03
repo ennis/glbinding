@@ -71,7 +71,7 @@ class Feature:
 			return self.major > other.major or (self.major == other.major and self.minor >= other.minor)
 
 
-def parseFeatures(xml, api, prefix):
+def parseFeatures(xml, api):
 
 	features = []
 	for feature in xml.iter("feature"):

@@ -1,0 +1,23 @@
+#pragma once
+
+#include <string>
+#include <iosfwd>
+
+#include <%abinding/%abinding_api.h>
+
+
+namespace %abinding 
+{
+
+class %ABINDING_API AbstractValue
+{
+public:
+    AbstractValue();
+    virtual ~AbstractValue();
+
+    virtual void printOn(std::ostream & stream) const = 0;
+
+    std::string asString() const;
+};
+
+} // namespace %abinding

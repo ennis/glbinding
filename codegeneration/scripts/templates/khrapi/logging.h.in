@@ -1,0 +1,24 @@
+#pragma once
+
+#include <%abinding/%abinding_api.h>
+
+#include <%abinding/callbacks.h>
+
+
+namespace %abinding 
+{
+
+namespace logging
+{
+    %ABINDING_API void resize(const unsigned int);
+
+    %ABINDING_API void start();
+    %ABINDING_API void start(const std::string & filepath);
+    %ABINDING_API void stop();
+
+    using BufferType = FunctionCall*;
+    %ABINDING_API void log(BufferType call);
+}
+
+
+} // namespace %abinding

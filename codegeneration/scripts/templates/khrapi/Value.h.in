@@ -1,0 +1,45 @@
+#pragma once
+
+#include <vector>
+#include <ostream>
+
+#include <%abinding/%abinding_api.h>
+
+#include <%abinding/AbstractValue.h>
+
+#include <%abinding/%a/types.h>
+
+
+namespace %abinding
+{
+
+template <typename T>
+class Value : public AbstractValue
+{
+public:
+    Value(const T & value);
+
+    Value & operator=(const Value &) = delete;
+
+    virtual void printOn(std::ostream & stream) const override;
+
+protected:
+    T value;
+};
+
+template <> %ABINDING_API void Value<%a::%Aenum>::printOn(std::ostream & stream) const;
+//template <> %ABINDING_API void Value<%a::%Abitfield>::printOn(std::ostream & stream) const;
+template <> %ABINDING_API void Value<%a::%Aboolean>::printOn(std::ostream & stream) const;
+template <> %ABINDING_API void Value<const %a::%Aubyte *>::printOn(std::ostream & stream) const;
+template <> %ABINDING_API void Value<const %a::%Achar *>::printOn(std::ostream & stream) const;
+template <> %ABINDING_API void Value<%a::%Auint_array_2>::printOn(std::ostream & stream) const;
+
+template <typename Argument>
+AbstractValue * createValue(Argument argument);
+
+template <typename... Arguments>
+std::vector<AbstractValue*> createValues(Arguments&&... arguments);
+
+} // namespace %abinding
+
+#include <%abinding/Value.hpp>

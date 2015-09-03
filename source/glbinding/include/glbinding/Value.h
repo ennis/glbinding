@@ -1,13 +1,31 @@
 #pragma once
 
-#include <khrapi/Value.h>
+#include <vector>
+#include <ostream>
 
 #include <glbinding/glbinding_api.h>
 
+#include <glbinding/AbstractValue.h>
+
 #include <glbinding/gl/types.h>
 
-namespace khrapi
+
+namespace glbinding
 {
+
+template <typename T>
+class Value : public AbstractValue
+{
+public:
+    Value(const T & value);
+
+    Value & operator=(const Value &) = delete;
+
+    virtual void printOn(std::ostream & stream) const override;
+
+protected:
+    T value;
+};
 
 template <> GLBINDING_API void Value<gl::GLenum>::printOn(std::ostream & stream) const;
 //template <> GLBINDING_API void Value<gl::GLbitfield>::printOn(std::ostream & stream) const;
@@ -16,4 +34,12 @@ template <> GLBINDING_API void Value<const gl::GLubyte *>::printOn(std::ostream 
 template <> GLBINDING_API void Value<const gl::GLchar *>::printOn(std::ostream & stream) const;
 template <> GLBINDING_API void Value<gl::GLuint_array_2>::printOn(std::ostream & stream) const;
 
-} // namespace khrapi
+template <typename Argument>
+AbstractValue * createValue(Argument argument);
+
+template <typename... Arguments>
+std::vector<AbstractValue*> createValues(Arguments&&... arguments);
+
+} // namespace glbinding
+
+#include <glbinding/Value.hpp>

@@ -54,6 +54,19 @@ std::string bitfieldString(T value, const std::unordered_map<T, std::string> & m
 namespace gl
 {
 
+std::ostream & operator<<(std::ostream & stream, const GLextension & value)
+{
+    stream << glbinding::Meta::getString(value);
+    return stream;
+}
+
+} // namespace gl
+
+
+
+namespace gl
+{
+
 std::ostream & operator<<(std::ostream & stream, const GLboolean & value)
 {
     stream << glbinding::Meta::getString(value);
@@ -69,19 +82,6 @@ namespace gl
 bool operator!(const GLboolean & a)
 {
     return !static_cast<std::underlying_type<GLboolean>::type>(a);
-}
-
-} // namespace gl
-
-
-
-namespace gl
-{
-
-std::ostream & operator<<(std::ostream & stream, const GLextension & value)
-{
-    stream << glbinding::Meta::getString(value);
-    return stream;
 }
 
 } // namespace gl

@@ -35,7 +35,7 @@ void glbinding_error(bool enable)
 {
     if (enable)
     {
-        glbinding::setCallbackMaskExcept(glbinding::CallbackMask::After, { "glGetError" });
+		glbinding::Binding::setCallbackMaskExcept(glbinding::CallbackMask::After, { "glGetError" });
 
         glbinding::setAfterCallback([](const glbinding::FunctionCall &)
         {
@@ -45,5 +45,5 @@ void glbinding_error(bool enable)
         });
     }
     else
-        glbinding::setCallbackMask(glbinding::CallbackMask::None);
+		glbinding::Binding::setCallbackMask(glbinding::CallbackMask::None);
 }

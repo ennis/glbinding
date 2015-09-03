@@ -2,6 +2,7 @@ from binding import *
 from classes.Enum import *
 from classes.Feature import *
 
+
 enumGroupTemplate = """    // %s
 
 %s
@@ -26,19 +27,19 @@ def enumDefinition(group, enum, maxlen, usedEnumsByName):
         reuse = usedEnumsByName[enum.name]
         return "//  %s %s= %s, // reuse %s" % (enumBID(enum), spaces, castEnumValue(enum.value), reuse)
 
-def enumImportDefinition(api, prefix, libraryNamespace, enum, group, usedEnumsByName):
+def enumImportDefinition(api, enum, group, usedEnumsByName):
 
     if enum.name not in usedEnumsByName:
         usedEnumsByName[enum.name] = group
-        return "using %s::%s;" % (libraryNamespace, enumBID(enum))
+        return "using %s::%s;" % (api, enumBID(enum))
     else:
         reuse = usedEnumsByName[enum.name]
-        return "// using %s::%s; // reuse %s" % (libraryNamespace, enumBID(enum), reuse)
+        return "// using %s::%s; // reuse %s" % (api, enumBID(enum), reuse)
 
 
-def forwardEnum(api, prefix, libraryNamespace, enum, group, usedEnumsByName):
+def forwardEnum(api, enum, group, usedEnumsByName):
 
-    qualifier = prefix.upper() + "enum"
+    qualifier = api.upper() + "enum"
 
     if enum.name not in usedEnumsByName:
         usedEnumsByName[enum.name] = group
@@ -61,31 +62,33 @@ def enumGroup(group, enums, usedEnumsByName):
         [ enumDefinition(group, e, maxlen, usedEnumsByName) for e in sorted(enums, key = lambda e: e.value) ]))
 
 
-def genEnumsAll(api, prefix, libraryNamespace, enums, outputdir, outputfile):
+def genEnumsAll(api, enums, outputdir, outputfile):
 
-    genFeatureEnums(api, prefix, libraryNamespace, enums, None, outputdir, outputfile, None)
+    genFeatureEnums(api, enums, None, outputdir, outputfile, None)
 
 
-def genEnumsFeatureGrouped(api, prefix, libraryNamespace, enums, features, outputdir, outputfile):
+def genEnumsFeatureGrouped(api, enums, features, outputdir, outputfile):
 
     # gen enums feature grouped
     for f in features:
         if f.api == api: # ToDo: probably seperate for all apis
-            genFeatureEnums(api, prefix, libraryNamespace, enums, f, outputdir, outputfile)
+            genFeatureEnums(api, enums, f, outputdir, outputfile)
             
             if api == "gl":
                 if f.major > 3 or (f.major == 3 and f.minor >= 2):
-                    genFeatureEnums(api, prefix, libraryNamespace, enums, f, outputdir, outputfile, True)
-                genFeatureEnums(api, prefix, libraryNamespace, enums, f, outputdir, outputfile, False, True)
+                    genFeatureEnums(api, enums, f, outputdir, outputfile, True)
+                genFeatureEnums(api, enums, f, outputdir, outputfile, False, True)
 
 
-def genFeatureEnums(api, prefix, libraryNamespace, enums, feature, outputdir, outputfile, core = False, ext = False):
+def genFeatureEnums(api, enums, feature, outputdir, outputfile, core = False, ext = False):
+
+    prefix = api.upper()
 
     of_all = outputfile.replace("?", "F")
 
     version = versionBID(feature, core, ext)
 
-    t = template(of_all).replace("%f", version).replace("%a", libraryNamespace).replace("%A", prefix.upper())
+    t = template(of_all).replace("%f", version).replace("%a", api).replace("%A", prefix)
     of = outputfile.replace("?", "")
     od = outputdir.replace("?", version)
 
@@ -93,7 +96,7 @@ def genFeatureEnums(api, prefix, libraryNamespace, enums, feature, outputdir, ou
 
     tgrouped     = groupEnumsByType(enums)
 
-    pureEnums    = [ e for e in tgrouped[prefix.upper() + "enum"] if 
+    pureEnums    = [ e for e in tgrouped[prefix + "enum"] if 
         (not ext and e.supported(feature, core)) or (ext and not e.supported(feature, False)) ]
     groupedEnums = groupEnumsByGroup(pureEnums)
 
@@ -101,11 +104,11 @@ def genFeatureEnums(api, prefix, libraryNamespace, enums, feature, outputdir, ou
     
     if feature:
         importToNamespace = [ ("\n// %s\n\n" + "%s") % (group, "\n".join(
-        [ enumImportDefinition(api, prefix, libraryNamespace, e, group, usedEnumsByName) for e in enums ]))  
+        [ enumImportDefinition(api, e, group, usedEnumsByName) for e in enums ]))  
             for group, enums in sorted(groupedEnums.items()) ]
     else:        
         importToNamespace = [ ("\n// %s\n\n" + "%s") % (group, "\n".join(
-        [ forwardEnum(api, prefix, libraryNamespace, e, group, usedEnumsByName) for e in enums ]))  
+        [ forwardEnum(api, e, group, usedEnumsByName) for e in enums ]))  
             for group, enums in sorted(groupedEnums.items()) ]
 
     usedEnumsByName.clear()

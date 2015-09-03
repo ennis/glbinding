@@ -8,6 +8,32 @@ namespace std
 {
 
 template<>
+struct enable_if<!is_class<hash<gl::GLextension>>::value, hash<gl::GLextension>>
+{
+    using type = gl::GLextension;
+    using underlying_type = std::underlying_type<type>::type;
+    
+    hash<underlying_type>::result_type operator()(const type & t) const
+    {
+        return hash<underlying_type>()(static_cast<underlying_type>(t));
+    }
+};
+
+} // namespace std
+
+
+namespace gl
+{
+
+GLBINDING_API std::ostream & operator<<(std::ostream & stream, const GLextension & value);
+
+} // namespace gl
+
+
+namespace std
+{
+
+template<>
 struct enable_if<!is_class<hash<gl::GLboolean>>::value, hash<gl::GLboolean>>
 {
     using type = gl::GLboolean;
@@ -34,32 +60,6 @@ namespace gl
 {
 
 GLBINDING_API bool operator!(const GLboolean & a);
-
-} // namespace gl
-
-
-namespace std
-{
-
-template<>
-struct enable_if<!is_class<hash<gl::GLextension>>::value, hash<gl::GLextension>>
-{
-    using type = gl::GLextension;
-    using underlying_type = std::underlying_type<type>::type;
-    
-    hash<underlying_type>::result_type operator()(const type & t) const
-    {
-        return hash<underlying_type>()(static_cast<underlying_type>(t));
-    }
-};
-
-} // namespace std
-
-
-namespace gl
-{
-
-GLBINDING_API std::ostream & operator<<(std::ostream & stream, const GLextension & value);
 
 } // namespace gl
 

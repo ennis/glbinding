@@ -29,9 +29,12 @@ from gen_versions import *
 from gen_meta import *
 from gen_test import *
 
-def generate(api, prefix, namespace, inputfile, revisionfile, patchfile):
+from gen_khr import *
 
-    library = namespace + "binding"
+
+def generate(api, inputfile, revisionfile, patchfile):
+
+    library = api + "binding"
     
     # preparing
 
@@ -54,23 +57,23 @@ def generate(api, prefix, namespace, inputfile, revisionfile, patchfile):
     print("PARSING (" + api + " API)")
 
     print("parsing features")
-    features   = parseFeatures(registry, api, prefix)
+    features   = parseFeatures(registry, api)
     print(" # " + str(len(features)) + " features parsed")
 
     print("parsing types")
-    types      = parseTypes(registry, api, prefix)
+    types      = parseTypes(registry, api)
     print(" # " + str(len(types)) + " types parsed")
 
     print("parsing extensions")
-    extensions = parseExtensions(registry, features, api, prefix)
+    extensions = parseExtensions(registry, features, api)
     print(" # " + str(len(extensions)) + " extensions parsed")
 
     print("parsing commands")
-    commands   = parseCommands(registry, features, extensions, api, prefix)
+    commands   = parseCommands(registry, features, extensions, api)
     print(" # " + str(len(commands)) + " commands parsed")
         
     print("parsing enums")
-    enums      = parseEnums(registry, features, extensions, commands, api, prefix)
+    enums      = parseEnums(registry, features, extensions, commands, api)
     print(" # " + str(len(enums)) + " enums parsed")
 
     print("parsing enum groups")
@@ -89,18 +92,18 @@ def generate(api, prefix, namespace, inputfile, revisionfile, patchfile):
         patchregistry = patchtree.getroot()
 
         print("patching types")
-        patch = parseTypes(patchregistry, api, prefix)
+        patch = parseTypes(patchregistry, api)
         patchTypes(types, patch)
 
         print("patching commands")
-        patch = parseCommands(patchregistry, features, extensions, api, prefix)
+        patch = parseCommands(patchregistry, features, extensions, api)
         patchCommands(commands, patch)
 
         print("patching features")
         print(" WARNING: todo")
 
         print("patching enums")
-        patch = parseEnums(patchregistry, features, extensions, commands, api, prefix)
+        patch = parseEnums(patchregistry, features, extensions, commands, api)
         patchEnums(enums, patch, groups)
 
         print("patching groups")
@@ -145,93 +148,111 @@ def generate(api, prefix, namespace, inputfile, revisionfile, patchfile):
     # generating
 
     print("")
-    print("GENERATING")
+    print("GENERATING BINDING")
 
-    includedir = "../source/"+library+"/include/"+library+"/"
-    sourcedir  = "../source/"+library+"/source/"
-    testdir    = "../source/tests/"+library+"-test/"
 
-    includedir_api = includedir + namespace + "?/"
+    targetdir  = "../source/" + api + "binding/"
+    Status.targetdir = targetdir
 
-    genRevision                   (api, prefix, namespace, revision,           sourcedir,      "revision.h")
+    includedir = targetdir + "include/" + library + "/"
+    sourcedir  = targetdir + "source/"
+    testdir    = "../source/tests/" + api + "-test/"
 
-    genExtensions                 (api, prefix, namespace, extensions,         includedir_api, "extension.h")
+    includedir_api = includedir + api + "?/"
 
-    genBooleans                   (api, prefix, namespace, enums,              includedir_api, "boolean.h")
-    genBooleansFeatureGrouped     (api, prefix, namespace, enums, features,    includedir_api, "boolean?.h")
+    genRevision                   (api, revision,           sourcedir,      "revision.h")
 
-    genValues                     (api, prefix, namespace, enums,              includedir_api, "values.h")
-    genValuesFeatureGrouped       (api, prefix, namespace, enums, features,    includedir_api, "values?.h")
+    genExtensions                 (api, extensions,         includedir_api, "extension.h")
 
-    genTypes_h                    (api, prefix, namespace, types, bitfGroups,  includedir_api, "types.h")
-    genTypeIntegrations_h         (api, prefix, namespace, types, bitfGroups,  includedir_api, "typeintegrations.h")
-    genTypesFeatureGrouped        (api, prefix, namespace, types, bitfGroups,  features,  includedir_api, "types?.h")
+    genBooleans                   (api, enums,              includedir_api, "boolean.h")
+    genBooleansFeatureGrouped     (api, enums, features,    includedir_api, "boolean?.h")
 
-    genBitfieldsAll               (api, prefix, namespace, enums,              includedir_api, "bitfield.h")
-    genBitfieldsFeatureGrouped    (api, prefix, namespace, enums, features,    includedir_api, "bitfield?.h")
+    genValues                     (api, enums,              includedir_api, "values.h")
+    genValuesFeatureGrouped       (api, enums, features,    includedir_api, "values?.h")
 
-    genEnumsAll                   (api, prefix, namespace, enums,              includedir_api, "enum.h")
-    genEnumsFeatureGrouped        (api, prefix, namespace, enums, features,    includedir_api, "enum?.h")
+    genTypes_h                    (api, types, bitfGroups,  includedir_api, "types.h")
+    genTypeIntegrations_h         (api, types, bitfGroups,  includedir_api, "typeintegrations.h")
+    genTypesFeatureGrouped        (api, types, bitfGroups,  features,  includedir_api, "types?.h")
 
-    genFunctionsAll               (api, prefix, namespace, commands,           includedir_api, "functions.h")
-    genFunctionsFeatureGrouped    (api, prefix, namespace, commands, features, includedir_api, "functions?.h")
+    genBitfieldsAll               (api, enums,              includedir_api, "bitfield.h")
+    genBitfieldsFeatureGrouped    (api, enums, features,    includedir_api, "bitfield?.h")
+
+    genEnumsAll                   (api, enums,              includedir_api, "enum.h")
+    genEnumsFeatureGrouped        (api, enums, features,    includedir_api, "enum?.h")
+
+    genFunctionsAll               (api, commands,           includedir_api, "functions.h")
+    genFunctionsFeatureGrouped    (api, commands, features, includedir_api, "functions?.h")
     
-    genFeatures                   (api, prefix, namespace, features,           includedir_api, "?.h")
+    genFeatures                   (api, features,           includedir_api, "?.h")
 
-    genTypeIntegrations_cpp       (api, prefix, namespace, types, bitfGroups,  sourcedir,  "typeintegrations.cpp")
+    genTypeIntegrations_cpp       (api, types, bitfGroups,  sourcedir,      "typeintegrations.cpp")
     
-    genFunctionImplementationsAll (api, prefix, namespace, commands,           sourcedir,  "functions.cpp")
+    genFunctionImplementationsAll (api, commands,           sourcedir,      "functions.cpp")
     
-    genTest                       (api, prefix, namespace, features,           testdir,        "AllVersions_test.cpp")
+    genTest                       (api, features,           testdir,        "AllVersions_test.cpp")
 
-    # Generate binding classes
+    # generate binding classes
 
-    genFunctionObjects_h          (api, prefix, namespace, commands,           includedir,     "Binding.h")
-    genFunctionObjects_cpp        (api, prefix, namespace, commands,           sourcedir,      "Binding_objects.cpp")
+    genFunctionObjects_h          (api, commands,           includedir,     "Binding.h")
+    genFunctionObjects_cpp        (api, commands,           sourcedir,      "Binding_objects.cpp")
 
-    genVersions                   (api, prefix, namespace, features,           sourcedir,      "Version_ValidVersions.cpp")
+    genVersions                   (api, features,           sourcedir,      "Version_ValidVersions.cpp")
+
+
+    print("")
+    print("GENERATING META")
 
     # ToDo: the generation of enum to/from string will probably be unified...
-    genMetaMaps		          (api, prefix, namespace, enums,              sourcedir,      "Meta_Maps.h",               bitfGroups)
-    genMetaStringsByBitfield      (api, prefix, namespace, bitfGroups,         sourcedir,      "Meta_StringsByBitfield.cpp")
-    genMetaBitfieldByString       (api, prefix, namespace, bitfGroups,         sourcedir,      "Meta_BitfieldsByString.cpp")
-    genMetaStringsByEnum          (api, prefix, namespace, enums,              sourcedir,      "Meta_StringsByBoolean.cpp", prefix.upper() + "boolean")
-    genMetaEnumsByString          (api, prefix, namespace, enums,              sourcedir,      "Meta_BooleansByString.cpp", prefix.upper() + "boolean")
-    genMetaStringsByEnum          (api, prefix, namespace, enums,              sourcedir,      "Meta_StringsByEnum.cpp",    prefix.upper() + "enum")
-    genMetaEnumsByString          (api, prefix, namespace, enums,              sourcedir,      "Meta_EnumsByString.cpp",    prefix.upper() + "enum")
 
-    genMetaStringsByExtension     (api, prefix, namespace, extensions,         sourcedir,      "Meta_StringsByExtension.cpp")
-    genMetaExtensionsByString     (api, prefix, namespace, extensions,         sourcedir,      "Meta_ExtensionsByString.cpp")
+    genMetaMaps                   (api, enums,              sourcedir,      "Meta_Maps.h",               bitfGroups)
+    genMetaStringsByBitfield      (api, bitfGroups,         sourcedir,      "Meta_StringsByBitfield.cpp")
+    genMetaBitfieldByString       (api, bitfGroups,         sourcedir,      "Meta_BitfieldsByString.cpp")
+    genMetaStringsByEnum          (api, enums,              sourcedir,      "Meta_StringsByBoolean.cpp", api.upper() + "boolean")
+    genMetaEnumsByString          (api, enums,              sourcedir,      "Meta_BooleansByString.cpp", api.upper() + "boolean")
+    genMetaStringsByEnum          (api, enums,              sourcedir,      "Meta_StringsByEnum.cpp",    api.upper() + "enum")
+    genMetaEnumsByString          (api, enums,              sourcedir,      "Meta_EnumsByString.cpp",    api.upper() + "enum")
 
-    genReqVersionsByExtension     (api, prefix, namespace, extensions,         sourcedir,      "Meta_ReqVersionsByExtension.cpp")
+    genMetaStringsByExtension     (api, extensions,         sourcedir,      "Meta_StringsByExtension.cpp")
+    genMetaExtensionsByString     (api, extensions,         sourcedir,      "Meta_ExtensionsByString.cpp")
 
-    genFunctionStringsByExtension (api, prefix, namespace, extensions,         sourcedir,      "Meta_FunctionStringsByExtension.cpp")
-    genExtensionsByFunctionString (api, prefix, namespace, extensions,         sourcedir,      "Meta_ExtensionsByFunctionString.cpp")
+    genReqVersionsByExtension     (api, extensions,         sourcedir,      "Meta_ReqVersionsByExtension.cpp")
+
+    genFunctionStringsByExtension (api, extensions,         sourcedir,      "Meta_FunctionStringsByExtension.cpp")
+    genExtensionsByFunctionString (api, extensions,         sourcedir,      "Meta_ExtensionsByFunctionString.cpp")
+
+
+    print("")
+    print("GENERATING KHR API")
+
+    # generate khr api classes (identical for all bindings)
+
+    genKHR_h   (api, includedir)
+    genKHR_cpp (api, sourcedir)
 
 
     print("")
 
 
 def main(argv):
+
     try:
-        opts, args = getopt.getopt(argv[1:], "a:p:l:s:r:x:", ["api=", "prefix=", "library=", "spec=", "revision=", "patch="])
+        opts, args = getopt.getopt(argv[1:], "a:s:r:x:", ["api=", "spec=", "revision=", "patch="])
     except getopt.GetoptError:
-        print("usage: %s -a <api> -p <symbol prefix> -l <namespace> -s <spec file> [-x <patch spec file>] [-r <revision file>]" % argv[0])
+        print("usage: %s -a <api> -s <spec file> [-x <patch spec file>] [-r <revision file>]" % argv[0])
         sys.exit(1)
         
-    api = None
-    prefix = None
-    library = None
-    inputfile = None
-    patchfile = None
-    revisionfile = None
-    
+    api             = None
+    inputfile       = None
+    patchfile       = None
+    revisionfile    = None
+
     for opt, arg in opts:
         if opt in ("-a", "--api"):
             api = arg
-        
-        if opt in ("-p", "--prefix"):
-            prefix = arg
+
+#       # note: prefix cannot work, since not all files are generated
+#       if opt in ("-p", "--prefix"): 
+#          prefix = arg
 
         if opt in ("-s", "--spec"):
             inputfile = arg
@@ -239,8 +260,9 @@ def main(argv):
         if opt in ("-x", "--patch"):
             patchfile = arg
 
-        if opt in ("-l", "--library"):
-            library = arg
+#       note: library should be named as its namespace/api
+#       if opt in ("-l", "--library"):
+#           library = arg
 
         if opt in ("-r", "--revision"):
             revisionfile  = arg
@@ -252,18 +274,9 @@ def main(argv):
     if inputfile == None:
         print("no api spec file given")
         sys.exit(1)
-    
-    if library == None:
-        print("no library name given")
-        sys.exit(1)
-    
-    if prefix == None:
-        prefix = api
-    
-    if library == None:
-        library = api
 
-    generate(api, prefix, library, inputfile, revisionfile, patchfile)
+
+    generate(api, inputfile, revisionfile, patchfile)
 
 
 if __name__ == "__main__":

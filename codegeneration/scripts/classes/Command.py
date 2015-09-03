@@ -105,7 +105,7 @@ class Command:
             return min(self.reqFeatures) <= feature
 
         
-def parseCommands(xml, features, extensions, api, prefix):
+def parseCommands(xml, features, extensions, api):
 
     commands = []
 

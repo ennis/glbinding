@@ -1,12 +1,13 @@
 #pragma once
 
-#include <khrapi/ProcAddress.h>
-
 #include <glbinding/glbinding_api.h>
 
-namespace glbinding 
+
+namespace glbinding
 {
 
-GLBINDING_API khrapi::ProcAddress getProcAddress(const char * name);
+using ProcAddress = void(*)();
+
+GLBINDING_API ProcAddress getProcAddress(const char * name);
 
 } // namespace glbinding

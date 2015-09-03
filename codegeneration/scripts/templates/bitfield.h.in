@@ -1,8 +1,7 @@
 #pragma once
 
 #include <%abinding/no%a.h>
-
-#include <khrapi/SharedBitfield.h>
+#include <%abinding/SharedBitfield.h>
 
 namespace %a
 {

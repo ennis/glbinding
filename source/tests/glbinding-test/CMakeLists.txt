@@ -40,7 +40,6 @@ set(libs
     ${GLFW_LIBRARY}
     ${GMOCK_LIBRARIES}
     ${GTEST_LIBRARIES}
-    khrapi
     glbinding
 )
 

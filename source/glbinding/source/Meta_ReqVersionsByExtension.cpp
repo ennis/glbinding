@@ -3,6 +3,7 @@
 
 #include <glbinding/gl/typeintegrations.h>
 #include <glbinding/gl/extension.h>
+
 #include <glbinding/Version.h>
 
 

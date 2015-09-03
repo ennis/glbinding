@@ -16,7 +16,7 @@
 namespace glbinding 
 {
 
-khrapi::ProcAddress getProcAddress(const char * name)
+ProcAddress getProcAddress(const char * name)
 {
 #ifdef WIN32
 
@@ -47,7 +47,7 @@ khrapi::ProcAddress getProcAddress(const char * name)
 
 #endif
 
-    return reinterpret_cast<khrapi::ProcAddress>(procAddress);
+    return reinterpret_cast<ProcAddress>(procAddress);
 }
 
 } // namespace glbinding

@@ -252,7 +252,7 @@ def suffixFreeEnumName(enum):
     return enum.name
 
 
-def parseExtensions(xml, features, api, prefix):
+def parseExtensions(xml, features, api):
 
     extensions = []
     for E in xml.iter("extensions"):

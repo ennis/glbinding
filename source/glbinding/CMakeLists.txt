@@ -12,14 +12,12 @@ find_package(OpenGL REQUIRED)
 
 include_directories(
     BEFORE
-    ${CMAKE_SOURCE_DIR}/source/khrapi/include
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 # Libraries
 
 set(libs
-    khrapi
     ${OPENGL_LIBRARIES}
 )
 
@@ -56,6 +54,21 @@ set(api_includes
     ${include_path}/ContextHandle.h
     ${include_path}/ContextInfo.h
     ${include_path}/Value.h
+
+    # khr api
+
+    ${include_path}/AbstractFunction.h
+    ${include_path}/AbstractValue.h
+    ${include_path}/callbacks.h
+    ${include_path}/Function.h
+    ${include_path}/Function.hpp
+    ${include_path}/logging.h
+    ${include_path}/ProcAddress.h
+    ${include_path}/SharedBitfield.h
+    ${include_path}/SharedBitfield.hpp
+    ${include_path}/State.h
+    ${include_path}/Value.h
+    ${include_path}/Value.hpp
     ${include_path}/Version.h
 )
 
@@ -66,13 +79,9 @@ list(APPEND api_includes ${featured_includes})
 set(sources
     ${source_path}/revision.h
     
-    ${source_path}/Binding.cpp
     ${source_path}/Binding_objects.cpp
-    ${source_path}/ProcAddress.cpp
     ${source_path}/ContextHandle.cpp
     ${source_path}/ContextInfo.cpp
-    ${source_path}/Value.cpp
-    ${source_path}/Version.cpp
     ${source_path}/Version_ValidVersions.cpp
 
     ${source_path}/Meta.cpp
@@ -91,6 +100,22 @@ set(sources
     
     ${source_path}/functions.cpp
     ${source_path}/typeintegrations.cpp
+
+    # khr api
+
+    ${source_path}/AbstractFunction.cpp
+    ${source_path}/AbstractValue.cpp
+    ${source_path}/Binding.cpp
+    ${source_path}/callbacks.cpp
+    ${source_path}/callbacks_private.h
+    ${source_path}/logging.cpp
+    ${source_path}/logging_private.h
+    ${source_path}/ProcAddress.cpp
+    ${source_path}/RingBuffer.h
+    ${source_path}/RingBuffer.hpp
+    ${source_path}/State.cpp
+    ${source_path}/Value.cpp
+    ${source_path}/Version.cpp
 )
 
 # Group source files

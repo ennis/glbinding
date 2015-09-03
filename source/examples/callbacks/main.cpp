@@ -77,7 +77,7 @@ int main()
         << "OpenGL Renderer: " << ContextInfo::renderer() << std::endl
         << "OpenGL Revision: " << Meta::glRevision() << " (gl.xml)" << std::endl << std::endl;
 
-    setCallbackMask(CallbackMask::After | CallbackMask::ParametersAndReturnValue);
+	Binding::setCallbackMask(glbinding::CallbackMask::After | glbinding::CallbackMask::ParametersAndReturnValue);
 
     setAfterCallback([](const FunctionCall & call) {
         std::cout << call.function->name() << "(";

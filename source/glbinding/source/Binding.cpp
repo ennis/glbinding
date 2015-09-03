@@ -23,13 +23,8 @@ namespace glbinding
 
 int Binding::s_maxpos = -1;
 
-std::vector<khrapi::AbstractFunction *> Binding::s_additionalFunctions;
+std::vector<AbstractFunction *> Binding::s_additionalFunctions;
 std::vector<Binding::ContextSwitchCallback> Binding::s_callbacks;
-
-khrapi::ProcAddress Binding::getProcAddress(const char * name)
-{
-    return glbinding::getProcAddress(name);
-}
 
 const Binding::array_t & Binding::functions() 
 {
@@ -41,7 +36,7 @@ int Binding::currentPos()
     return t_pos;
 }
 
-const std::vector<khrapi::AbstractFunction *> & Binding::additionalFunctions()
+const std::vector<AbstractFunction *> & Binding::additionalFunctions()
 {
     return s_additionalFunctions;
 }
@@ -86,17 +81,17 @@ void Binding::initialize(
         resolveFunctions();
 }
 
-void Binding::registerAdditionalFunction(khrapi::AbstractFunction * function)
+void Binding::registerAdditionalFunction(AbstractFunction * function)
 {
     s_additionalFunctions.push_back(function);
 }
 
 void Binding::resolveFunctions()
 {
-    for (khrapi::AbstractFunction * function : functions())
+    for (AbstractFunction * function : functions())
         function->resolveAddress();
 
-    for (khrapi::AbstractFunction * function : additionalFunctions())
+    for (AbstractFunction * function : additionalFunctions())
         function->resolveAddress();
 }
 
@@ -164,7 +159,7 @@ void Binding::provideState(const int pos)
     // if a state at pos exists, it is assumed to be neglected before
     if (s_maxpos < pos)
     {
-        for (khrapi::AbstractFunction * function : functions())
+        for (AbstractFunction * function : functions())
             function->resizeStates(pos + 1);
 
         s_maxpos = pos;
@@ -178,15 +173,15 @@ void Binding::neglectState(const int pos)
 
     if (pos == s_maxpos)
     {
-        for (khrapi::AbstractFunction * function : Binding::functions())
+        for (AbstractFunction * function : Binding::functions())
             function->resizeStates(std::max(0, pos - 1));
 
         --s_maxpos;
     }
     else
     {
-        for (khrapi::AbstractFunction * function : Binding::functions())
-            function->state(pos) = khrapi::State<Binding>();
+        for (AbstractFunction * function : Binding::functions())
+            function->state(pos) = State();
     }
 
     if (pos == t_pos)
@@ -199,35 +194,35 @@ void Binding::setStatePos(const int pos)
 }
 
 
-void Binding::setCallbackMask(const khrapi::CallbackMask mask)
+void Binding::setCallbackMask(const CallbackMask mask)
 {
-    for (khrapi::AbstractFunction * function : functions())
+    for (AbstractFunction * function : functions())
         function->setCallbackMask(mask);
 }
 
-void Binding::setCallbackMaskExcept(const khrapi::CallbackMask mask, const std::set<std::string> & blackList)
+void Binding::setCallbackMaskExcept(const CallbackMask mask, const std::set<std::string> & blackList)
 {
-    for (khrapi::AbstractFunction * function : functions())
+    for (AbstractFunction * function : functions())
         if (blackList.find(function->name()) == blackList.end())
             function->setCallbackMask(mask);
 }
 
-void Binding::addCallbackMask(const khrapi::CallbackMask mask)
+void Binding::addCallbackMask(const CallbackMask mask)
 {
-    for (khrapi::AbstractFunction * function : functions())
+    for (AbstractFunction * function : functions())
         function->addCallbackMask(mask);
 }
 
-void Binding::addCallbackMaskExcept(const khrapi::CallbackMask mask, const std::set<std::string> & blackList)
+void Binding::addCallbackMaskExcept(const CallbackMask mask, const std::set<std::string> & blackList)
 {
-    for (khrapi::AbstractFunction * function : functions())
+    for (AbstractFunction * function : functions())
         if (blackList.find(function->name()) == blackList.end())
             function->addCallbackMask(mask);
 }
 
-void Binding::removeCallbackMask(const khrapi::CallbackMask mask)
+void Binding::removeCallbackMask(const CallbackMask mask)
 {
-    for (khrapi::AbstractFunction * function : functions())
+    for (AbstractFunction * function : functions())
         function->removeCallbackMask(mask);
 }
 

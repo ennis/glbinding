@@ -2,6 +2,7 @@
 #include "Canvas.h"
 
 #include <cassert>
+#include <iostream>
 
 #ifdef __APPLE__
 #include <OpenGL/OpenGL.h>
@@ -92,17 +93,14 @@ void Canvas::initializeGL(const QSurfaceFormat & format)
 
     // print some gl infos (query)
 
-    qDebug();
+	std::cout << std::endl;
 #if (QT_VERSION >= 0x050300)
-    qDebug() << "OpenGL API:     " << (m_context->isOpenGLES() ? "GLES" : "GL");
+	std::cout << "OpenGL API:      " << (m_context->isOpenGLES() ? "GLES" : "GL") << std::endl;
 #endif
-    qDebug() << "OpenGL Version: " << qPrintable(QString::fromStdString(
-        glbinding::ContextInfo::version().toString()));
-    qDebug() << "OpenGL Vendor:  " << qPrintable(QString::fromStdString(
-        glbinding::ContextInfo::vendor()));
-    qDebug() << "OpenGL Renderer:" << qPrintable(QString::fromStdString(
-        glbinding::ContextInfo::renderer()));
-    qDebug();
+	std::cout << "OpenGL Version:  " << glbinding::ContextInfo::version().toString() << std::endl;
+    std::cout << "OpenGL Vendor:   " << glbinding::ContextInfo::vendor() << std::endl;
+	std::cout << "OpenGL Renderer: " << glbinding::ContextInfo::renderer() << std::endl;
+	std::cout << std::endl;
 
     m_context->doneCurrent();
 
@@ -201,11 +199,9 @@ void Canvas::setSwapInterval(SwapInterval swapInterval)
 #endif
 
     if (!result)
-        qWarning("Setting swap interval to %s failed."
-            , qPrintable(swapIntervalToString(swapInterval)));
+		std::cerr << "Setting swap interval to " << swapIntervalToString(swapInterval).toStdString() << " failed." << std::endl;
     else
-        qDebug("Setting swap interval to %s."
-            , qPrintable(swapIntervalToString(swapInterval)));
+        std::cout << "Setting swap interval to " << swapIntervalToString(swapInterval).toStdString() << "." << std::endl;
 
     m_context->doneCurrent();
 }

@@ -1,0 +1,13 @@
+#pragma once
+
+#include <%abinding/%abinding_api.h>
+
+
+namespace %abinding
+{
+
+using ProcAddress = void(*)();
+
+%ABINDING_API ProcAddress getProcAddress(const char * name);
+
+} // namespace %abinding

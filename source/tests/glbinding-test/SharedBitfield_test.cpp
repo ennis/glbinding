@@ -1,9 +1,9 @@
 
 #include <gmock/gmock.h>
 
-#include <khrapi/SharedBitfield.h>
+#include <glbinding/SharedBitfield.h>
 
-using namespace khrapi;
+using namespace glbinding;
 
 enum class A
 {

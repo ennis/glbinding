@@ -104,6 +104,10 @@ add_executable(${target} ${sources} ${compiled_ui_files})
 
 target_link_libraries(${target} ${libs})
 
+if(MSVC)
+    # allow constant conditional expressions (introduced in qt via q_assert)
+    set(DEFAULT_COMPILE_FLAGS ${DEFAULT_COMPILE_FLAGS} /wd4127)
+endif()
 
 if(MSVC)
     # -> msvc14 : declaration hides class member (problem in qt)

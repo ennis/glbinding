@@ -6,6 +6,7 @@
 
 #include <glbinding/Meta.h>
 
+
 namespace
 {
 
@@ -20,7 +21,7 @@ std::string wrapString(const char * value)
 
 }
 
-namespace khrapi
+namespace glbinding
 {
 
 template <>
@@ -67,4 +68,4 @@ void Value<gl::GLuint_array_2>::printOn(std::ostream & stream) const
     stream << ss.str();
 }
 
-} // namespace khrapi
+} // namespace glbinding

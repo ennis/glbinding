@@ -52,7 +52,7 @@ class Type:
         return self.name < other.name
 
 
-def parseTypes(xml, api, prefix):
+def parseTypes(xml, api):
 
     types = []
     for T in xml.iter("types"):

@@ -4,13 +4,12 @@
 #include <vector>
 #include <functional>
 
-#include <khrapi/Function.h>
-
 #include <%abinding/%abinding_api.h>
 
 #include <%abinding/%a/types.h>
 
 #include <%abinding/ContextHandle.h>
+#include <%abinding/Function.h>
 
 
 namespace %abinding
@@ -19,17 +18,15 @@ namespace %abinding
 class %ABINDING_API Binding
 {
 public:
-    using array_t = std::array<khrapi::AbstractFunction *, %s>;
+    using array_t = std::array<AbstractFunction *, %s>;
     using ContextSwitchCallback = std::function<void(ContextHandle)>;
 
     Binding() = delete;
-    
-    static khrapi::ProcAddress getProcAddress(const char * name);
 
     static void initialize(bool resolveFunctions = true);
     static void initialize(ContextHandle context, bool useContext = true, bool resolveFunctions = true);
     
-    static void registerAdditionalFunction(khrapi::AbstractFunction * function);
+    static void registerAdditionalFunction(AbstractFunction * function);
 
     static void resolveFunctions();
 
@@ -44,15 +41,15 @@ public:
     static size_t size();
 
     static const array_t & functions();
-    static const std::vector<khrapi::AbstractFunction *> & additionalFunctions();
+    static const std::vector<AbstractFunction *> & additionalFunctions();
 
     static int currentPos();
 
-    static void setCallbackMask(khrapi::CallbackMask mask);
-    static void setCallbackMaskExcept(khrapi::CallbackMask mask, const std::set<std::string> & blackList);
-    static void addCallbackMask(khrapi::CallbackMask mask);
-    static void addCallbackMaskExcept(khrapi::CallbackMask mask, const std::set<std::string> & blackList);
-    static void removeCallbackMask(khrapi::CallbackMask mask);
+    static void setCallbackMask(CallbackMask mask);
+    static void setCallbackMaskExcept(CallbackMask mask, const std::set<std::string> & blackList);
+    static void addCallbackMask(CallbackMask mask);
+    static void addCallbackMaskExcept(CallbackMask mask, const std::set<std::string> & blackList);
+    static void removeCallbackMask(CallbackMask mask);
 
 protected:
     static void provideState(int pos);
@@ -69,7 +66,7 @@ public:
 
 protected:
 	static const array_t s_functions;
-	static std::vector<khrapi::AbstractFunction *> s_additionalFunctions;
+	static std::vector<AbstractFunction *> s_additionalFunctions;
 	static std::vector<ContextSwitchCallback> s_callbacks;
 };
 

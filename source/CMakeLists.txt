@@ -11,7 +11,6 @@ include_directories(
 )
 
 # Libraries
-add_subdirectory(khrapi)
 
 set(IDE_FOLDER "")
 add_subdirectory(glbinding)

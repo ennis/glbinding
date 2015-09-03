@@ -92,14 +92,14 @@ int main()
         if (func->isResolved())
             ++resolved;
 
-        if (func->extensions().empty())
-            nonExtFuncs.insert(func);
-        else
-        {
-            for (GLextension ext : func->extensions())
-                funcsByExt[ext].insert(func);
-            ++assigned;
-        }
+        //if (func->extensions().empty())
+        //    nonExtFuncs.insert(func);
+        //else
+        //{
+        //    for (GLextension ext : func->extensions())
+        //        funcsByExt[ext].insert(func);
+        //    ++assigned;
+        //}
     }
 
     // print all extensions with support info and functions 

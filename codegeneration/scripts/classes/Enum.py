@@ -2,23 +2,27 @@ from classes.Feature import *
 from classes.Extension import *
 
 
-def translateType(prefix, t, name):
+def translateType(api, t, name):
 
-    if name == prefix.upper() + "_TRUE" or name == prefix.upper() + "_FALSE":
-        return prefix.upper() + "boolean"
+    prefix = api.upper()
 
-    return { "u" : "unsigned int", "ull" : "unsigned long long int"    }.get(t, prefix.upper() + "enum")
+    if name == prefix + "_TRUE" or name == prefix + "_FALSE":
+        return prefix + "boolean"
+
+    return { "u" : "unsigned int", "ull" : "unsigned long long int"    }.get(t, prefix + "enum")
 
 
 class Enum:
 
-    def __init__(self, xml, features, extensions, groupString, groupType, api, prefix):
+    def __init__(self, xml, features, extensions, groupString, groupType, api):
+
+        prefix = api.upper()
 
         self.api   = api
         
         self.name  = xml.attrib["name"]
         self.value = ''.join(xml.attrib["value"] if xml.attrib["value"].startswith("0x") else [ c for c in xml.attrib["value"] if c in "[^-1234567890]" ])
-        self.type  = prefix.upper() + "enum"
+        self.type  = prefix + "enum"
 
         self.aliasString = ""
         self.alias = None
@@ -31,9 +35,9 @@ class Enum:
         self.aliasString = xml.attrib.get("alias", None)
 
         if groupString == "SpecialNumbers" or groupString == "Boolean":
-            self.type = translateType(prefix, xml.attrib.get("type", ""), self.name)
+            self.type = translateType(api, xml.attrib.get("type", ""), self.name)
         elif groupType == "bitmask":
-            self.type = prefix.upper() + "bitfield"
+            self.type = prefix + "bitfield"
             self.groupString = groupString
 
         self.reqFeatures   = []
@@ -204,7 +208,7 @@ def verifyGroups(groups, enums):
     #        print ("  %s groups for %s (%s)" % (str(len(enum.groups)), enum.name, ", ".join([g.name for g in enum.groups])))
 
 
-def parseEnums(xml, features, extensions, commands, api, prefix):
+def parseEnums(xml, features, extensions, commands, api):
 
     # create utility string sets to simplify application of constraints
 
@@ -251,7 +255,7 @@ def parseEnums(xml, features, extensions, commands, api, prefix):
             if "api" in enum.attrib and enum.attrib["api"] != api:
                 continue
 
-            enums.add(Enum(enum, features, extensions, groupString, groupType, api, prefix))
+            enums.add(Enum(enum, features, extensions, groupString, groupType, api))
 
     return sorted(enums)
 

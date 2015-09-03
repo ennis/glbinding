@@ -2,7 +2,6 @@ from binding import *
 from classes.Command import *
 
 
-
 functionForwardTemplate = """%sBINDING_API %s %s(%s);"""
 
 importFunctionTemplate = """using %s%s;"""
@@ -58,47 +57,50 @@ def namespacify(type, namespace):
     return namespace + "::" + type
 
 
-def bitfieldType(api, prefix, libraryNamespace, param):
+def bitfieldType(api, param):
 
-    return param.groupString if param.groupString else prefix.upper() + "bitfield" 
+    return param.groupString if param.groupString else api.upper() + "bitfield" 
 
 
-def paramSignature(api, prefix, libraryNamespace, param, forward):
+def paramSignature(api, param, forward):
 
-    if param.type == prefix.upper() + "bitfield":
-        return bitfieldType(api, prefix, libraryNamespace, param)
+    if param.type == api.upper() + "bitfield":
+        return bitfieldType(api, param)
     
     return param.type
 
 
-def functionMember(api, prefix, libraryNamespace, function):
+def functionMember(api, function):
 
-    params = ", ".join([function.returntype] + [ paramSignature(api, prefix, libraryNamespace, p, False) for p in function.params ])
-    return 'khrapi::Function<Binding, %s> Binding::%s("%s");' % (params, functionBID(function)[len(prefix):], function.name)
-
-
-def functionDecl(api, prefix, libraryNamespace, function):
-
-    params = ", ".join([namespacify(function.returntype, libraryNamespace)] + [ namespacify(paramSignature(api, prefix, libraryNamespace, p, True), libraryNamespace) for p in function.params ])
-    return tab + "static khrapi::Function<Binding, %s> %s;" % (params, functionBID(function)[len(prefix):])
+    params = ", ".join([function.returntype] + [ paramSignature(api, p, False) for p in function.params ])
+    return '%sbinding::Function<%s> Binding::%s("%s");' % (api, params, functionBID(function)[len(api):], function.name)
 
 
-def functionForward(api, prefix, libraryNamespace, function, feature, version):
+def functionDecl(api, function):
 
-    params = ", ".join([paramSignature(api, prefix, libraryNamespace, p, False) + " " + paramPass(p) for p in function.params])
+    params = ", ".join([namespacify(function.returntype, api)] + 
+        [ namespacify(paramSignature(api, p, True), api) for p in function.params ])
+    return tab + "static %sbinding::Function<%s> %s;" % (api, params, functionBID(function)[len(api):])
+
+
+def functionForward(api, function, feature, version):
+
+    params = ", ".join([paramSignature(api, p, False) + " " + paramPass(p) for p in function.params])
 
     if feature:
-        return importFunctionTemplate % (libraryNamespace+"::", functionBID(function))
+        return importFunctionTemplate % (api + "::", functionBID(function))
     else:
-        return functionForwardTemplate % (libraryNamespace.upper(), function.returntype, functionBID(function), params)
+        return functionForwardTemplate % (api.upper(), function.returntype, functionBID(function), params)
 
 
-def functionInlineForwardImplementation(api, prefix, libraryNamespace, function, feature, version):
+def functionInlineForwardImplementation(api, function, feature, version):
 
-    params = ", ".join([paramSignature(api, prefix, libraryNamespace, p, False) + " " + paramPass(p) for p in function.params])
+    prefix = api.upper()
+
+    params = ", ".join([paramSignature(api, p, False) + " " + paramPass(p) for p in function.params])
     paramNames = ", ".join([p.name for p in function.params])
 
-    if feature and function.returntype in [ prefix.upper() + "enum", prefix.upper() + "bitfield" ]:
+    if feature and function.returntype in [ prefix + "enum", prefix + "bitfield" ]:
         return functionInlineForwardTemplateRValueCast % (function.returntype, functionBID(function), params,
             version, function.returntype, functionBID(function), paramNames)
     else:
@@ -106,12 +108,14 @@ def functionInlineForwardImplementation(api, prefix, libraryNamespace, function,
             functionBID(function), paramNames)
 
 
-def functionForwardImplementation(api, prefix, libraryNamespace, function, feature, version):
+def functionForwardImplementation(api, function, feature, version):
+
+    prefix = api.upper()
 
     params = ", ".join([paramSignature(api, p, False) + " " + paramPass(p) for p in function.params])
     paramNames = ", ".join([p.name for p in function.params])
 
-    if feature and function.returntype in [ prefix.upper() + "enum", prefix.upper() + "bitfield" ]:
+    if feature and function.returntype in [ prefix + "enum", prefix + "bitfield" ]:
         return functionForwardImplementationTemplateRValueCast % (function.returntype, functionBID(function), params,
             version, function.returntype, functionBID(function), paramNames)
     else:
@@ -119,17 +123,19 @@ def functionForwardImplementation(api, prefix, libraryNamespace, function, featu
             functionBID(function), paramNames)
 
 
-def functionImplementation(api, prefix, libraryNamespace, function, feature, version):
+def functionImplementation(api, function, feature, version):
 
-    params = ", ".join([paramSignature(api, prefix, libraryNamespace, p, False) + " " + paramPass(p) for p in function.params])
+    prefix = api.upper()
+
+    params = ", ".join([paramSignature(api, p, False) + " " + paramPass(p) for p in function.params])
     paramNames = ", ".join([p.name for p in function.params])
 
-    if feature and function.returntype in [ prefix.upper() + "enum", prefix.upper() + "bitfield" ]:
+    if feature and function.returntype in [ prefix + "enum", prefix + "bitfield" ]:
         return functionImplementationTemplateRValueCast % (function.returntype, functionBID(function), params,
-            version, function.returntype, functionBID(function)[len(prefix):], paramNames)
+            version, function.returntype, functionBID(function)[len(api):], paramNames)
     else:
         return functionImplementationTemplate % (function.returntype, functionBID(function), params,
-            libraryNamespace, functionBID(function)[len(prefix):], paramNames)
+            api, functionBID(function)[len(api):], paramNames)
 
 
 def paramPass(param): 
@@ -137,59 +143,59 @@ def paramPass(param):
     return param.name
 
 
-def functionList(api, prefix, libraryNamespace, commands):
+def functionList(api, commands):
 
-    return (",\n" + tab).join([ "&"+ functionBID(f)[len(prefix):] for f in commands ])
+    return (",\n" + tab).join([ "&"+ functionBID(f)[len(api):] for f in commands ])
 
 
-def genFunctionObjects_h(api, prefix, libraryNamespace, commands, outputdir, outputfile):    
+def genFunctionObjects_h(api, commands, outputdir, outputfile):    
 
     of = outputfile
-    t = template(of).replace("%a", libraryNamespace).replace("%A", libraryNamespace.upper())
+    t = template(of).replace("%a", api).replace("%A", api.upper())
 
     status(outputdir + of)
 
     with open(outputdir + of, 'w') as file:
         file.write(t % (
             len(commands),
-            "\n".join([ functionDecl(api, prefix, libraryNamespace, f) for f in commands ])))
+            "\n".join([ functionDecl(api, f) for f in commands ])))
 
 
-def genFunctionObjects_cpp(api, prefix, libraryNamespace, commands, outputdir, outputfile):
+def genFunctionObjects_cpp(api, commands, outputdir, outputfile):
 
     of = outputfile
-    t = template(of).replace("%a", libraryNamespace).replace("%A", libraryNamespace.upper())
+    t = template(of).replace("%a", api).replace("%A", api.upper())
 
     status(outputdir + of)
 
     with open(outputdir + of, 'w') as file:
-        file.write(t.replace("%b", functionBID(commands[0])[len(prefix):]).replace("%e", functionBID(commands[-1])[len(prefix):]) % (
-            "\n".join([ functionMember(api, prefix, libraryNamespace, f) for f in commands ]),
-            functionList(api, prefix, libraryNamespace, commands)
+        file.write(t.replace("%b", functionBID(commands[0])[len(api):]).replace("%e", functionBID(commands[-1])[len(api):]) % (
+            "\n".join([ functionMember(api, f) for f in commands ]),
+            functionList(api, commands)
         ))
 
 
-def genFunctionsAll(api, prefix, libraryNamespace, commands, outputdir, outputfile):
+def genFunctionsAll(api, commands, outputdir, outputfile):
 
-    genFeatureFunctions(api, prefix, libraryNamespace, commands, None, outputdir, outputfile, None)
-
-
-def genFunctionImplementationsAll(api, prefix, libraryNamespace, commands, outputdir, outputfile):
-
-    genFeatureFunctionImplementations(api, prefix, libraryNamespace, commands, None, outputdir, outputfile, None)
+    genFeatureFunctions(api, commands, None, outputdir, outputfile, None)
 
 
-def genFunctionsFeatureGrouped(api, prefix, libraryNamespace, commands, features, outputdir, outputfile):
+def genFunctionImplementationsAll(api, commands, outputdir, outputfile):
+
+    genFeatureFunctionImplementations(api, commands, None, outputdir, outputfile, None)
+
+
+def genFunctionsFeatureGrouped(api, commands, features, outputdir, outputfile):
 
     # gen functions feature grouped
     for f in features:
         if f.api == api: # ToDo: probably seperate for all apis
-            genFeatureFunctions(api, prefix, libraryNamespace, commands, f, outputdir, outputfile)
+            genFeatureFunctions(api, commands, f, outputdir, outputfile)
             
             if api == "gl":
                 if f.major > 3 or (f.major == 3 and f.minor >= 2):
-                    genFeatureFunctions(api, prefix, libraryNamespace, commands, f, outputdir, outputfile, True)
-                genFeatureFunctions(api, prefix, libraryNamespace, commands, f, outputdir, outputfile, False, True)
+                    genFeatureFunctions(api, commands, f, outputdir, outputfile, True)
+                genFeatureFunctions(api, commands, f, outputdir, outputfile, False, True)
 
 
 def genFunctionImplementationsFeatureGrouped(api, commands, features, outputdir, outputfile):
@@ -197,21 +203,21 @@ def genFunctionImplementationsFeatureGrouped(api, commands, features, outputdir,
     # gen functions feature grouped
     for f in features:
         if f.api == api: # ToDo: probably seperate for all apis
-            genFeatureFunctionImplementations(api, prefix, libraryNamespace, commands, f, outputdir, outputfile)
+            genFeatureFunctionImplementations(api, commands, f, outputdir, outputfile)
             
             if api == "gl":
                 if f.major > 3 or (f.major == 3 and f.minor >= 2):
-                    genFeatureFunctionImplementations(api, prefix, libraryNamespace, commands, f, outputdir, outputfile, True)
-                genFeatureFunctionImplementations(api, prefix, libraryNamespace, commands, f, outputdir, outputfile, False, True)
+                    genFeatureFunctionImplementations(api, commands, f, outputdir, outputfile, True)
+                genFeatureFunctionImplementations(api, commands, f, outputdir, outputfile, False, True)
 
 
-def genFeatureFunctions(api, prefix, libraryNamespace, commands, feature, outputdir, outputfile, core = False, ext = False):
+def genFeatureFunctions(api, commands, feature, outputdir, outputfile, core = False, ext = False):
 
     of_all = outputfile.replace("?", "F")
 
     version = versionBID(feature, core, ext)
 
-    t = template(of_all).replace("%f", version).replace("%a", libraryNamespace)
+    t = template(of_all).replace("%f", version).replace("%a", api)
     of = outputfile.replace("?", "")
     od = outputdir.replace("?", version)
 
@@ -226,19 +232,19 @@ def genFeatureFunctions(api, prefix, libraryNamespace, commands, feature, output
     with open(od + of, 'w') as file:
         if not feature:
             file.write(t % ("\n".join(
-                [ functionForward(api, prefix, libraryNamespace, c, feature, version) for c in pureCommands ])))
+                [ functionForward(api, c, feature, version) for c in pureCommands ])))
         else:
             file.write(t % ("\n".join(
-                [ functionForward(api, prefix, libraryNamespace, c, feature, version) for c in pureCommands ])))
+                [ functionForward(api, c, feature, version) for c in pureCommands ])))
 
 
-def genFeatureFunctionImplementations(api, prefix, libraryNamespace, commands, feature, outputdir, outputfile, core = False, ext = False):
+def genFeatureFunctionImplementations(api, commands, feature, outputdir, outputfile, core = False, ext = False):
 
     of_all = outputfile.replace("?", "F")
 
     version = versionBID(feature, core, ext)
 
-    t = template(of_all).replace("%f", version).replace("%a", libraryNamespace)
+    t = template(of_all).replace("%f", version).replace("%a", api)
     of = outputfile.replace("?", "")
     od = outputdir.replace("?", version)
 
@@ -253,7 +259,7 @@ def genFeatureFunctionImplementations(api, prefix, libraryNamespace, commands, f
     with open(od + of, 'w') as file:
         if not feature:
             file.write(t % ("\n".join(
-                [ functionImplementation(api, prefix, libraryNamespace, c, feature, version) for c in pureCommands ])))
+                [ functionImplementation(api, c, feature, version) for c in pureCommands ])))
         else:
             file.write(t % ("\n".join(
-                [ functionForwardImplementation(c, prefix, libraryNamespace, feature, version) for c in pureCommands ])))
+                [ functionForwardImplementation(c, feature, version) for c in pureCommands ])))

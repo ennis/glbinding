@@ -1,0 +1,36 @@
+#pragma once
+
+#include <%abinding/%abinding_api.h>
+
+#include <%abinding/ProcAddress.h>
+#include <%abinding/callbacks.h>
+
+
+namespace %abinding
+{
+
+class %ABINDING_API State
+{
+public:
+    State();
+    virtual ~State() = default;
+
+    bool isInitialized() const;
+
+    ProcAddress address() const;
+
+    CallbackMask callbackMask() const;
+    void setCallbackMask(CallbackMask mask);
+
+    void resolve(const char * name);
+
+    bool isResolved() const;
+
+protected:
+    ProcAddress m_address;
+    bool m_initialized;
+
+    CallbackMask m_callbackMask;
+};
+
+} // namespace %abinding
