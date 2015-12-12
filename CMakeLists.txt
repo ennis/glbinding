@@ -193,6 +193,6 @@ endif()
 # Include projects
 
 add_subdirectory(source)
-add_subdirectory(docs)
-add_subdirectory(packages)
-add_subdirectory(codegeneration)
+#add_subdirectory(docs)
+#add_subdirectory(packages)
+#add_subdirectory(codegeneration)
